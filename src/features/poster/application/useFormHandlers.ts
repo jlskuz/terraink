@@ -19,6 +19,7 @@ import {
   MAX_DISTANCE_METERS,
   LAYOUT_MATCH_TOLERANCE_CM,
 } from "@/core/config";
+import type { PosterStyleTemplateId } from "@/features/poster/domain/posterStyleTemplates";
 
 /**
  * Provides ready-made event handlers for the settings form,
@@ -230,6 +231,17 @@ export function useFormHandlers() {
     [dispatch],
   );
 
+  const handlePosterStyleTemplateChange = useCallback(
+    (templateId: PosterStyleTemplateId) => {
+      dispatch({
+        type: "SET_FIELD",
+        name: "posterStyleTemplate",
+        value: templateId,
+      });
+    },
+    [dispatch],
+  );
+
   return {
     handleChange,
     handleNumericFieldBlur,
@@ -247,5 +259,6 @@ export function useFormHandlers() {
     handleClearLocation,
     setLocationFocused,
     handleCreditsChange,
+    handlePosterStyleTemplateChange,
   };
 }
