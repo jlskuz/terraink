@@ -93,6 +93,7 @@ export const DEFAULT_FORM: PosterForm = {
   includeRoadMinorLow: true,
   includeRoadOutline: true,
   includeCycleways: false,
+  includeCountryBorders: false,
   showMarkers: true,
   showRoutes: true,
 };
@@ -299,6 +300,7 @@ export function PosterProvider({ children }: { children: ReactNode }) {
         includeRoadMinorLow: state.form.includeRoadMinorLow,
         includeRoadOutline: state.form.includeRoadOutline,
         includeCycleways: state.form.includeCycleways,
+        includeCountryBorders: state.form.includeCountryBorders,
         distanceMeters: Number(state.form.distance),
       }),
     [
@@ -314,6 +316,7 @@ export function PosterProvider({ children }: { children: ReactNode }) {
       state.form.includeRoadMinorLow,
       state.form.includeRoadOutline,
       state.form.includeCycleways,
+      state.form.includeCountryBorders,
       state.form.distance,
     ],
   );
