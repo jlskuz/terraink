@@ -268,6 +268,8 @@ export default function SettingsPanel({
                 minPosterCm={MIN_POSTER_CM}
                 maxPosterCm={MAX_POSTER_CM}
                 onNumericFieldBlur={handleNumericFieldBlur}
+                hasSelectedLocation={Boolean(state.selectedLocation)}
+                boundaryStatus={state.locationBoundaryStatus}
               />
             ) : null}
           </div>

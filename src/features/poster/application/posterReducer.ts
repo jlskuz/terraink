@@ -1,4 +1,7 @@
-import type { SearchResult } from "@/features/location/domain/types";
+import type {
+  LocationBoundary,
+  SearchResult,
+} from "@/features/location/domain/types";
 import type {
   MarkerDefaults,
   MarkerIconDefinition,
@@ -56,9 +59,17 @@ export interface PosterForm {
   includeCycleways: boolean;
   includeCountryBorders: boolean;
   includeFinegrainedBorders: boolean;
+  clipToBoundary: boolean;
   showMarkers: boolean;
   showRoutes: boolean;
 }
+
+/** Lifecycle of the boundary lookup backing `clipToBoundary`. */
+export type LocationBoundaryStatus =
+  | "idle"
+  | "loading"
+  | "ready"
+  | "unavailable";
 
 /* ────── App-level state ────── */
 
@@ -79,6 +90,8 @@ export interface PosterState {
   isLocationFocused: boolean;
   selectedLocation: SearchResult | null;
   userLocation: SearchResult | null;
+  locationBoundary: LocationBoundary | null;
+  locationBoundaryStatus: LocationBoundaryStatus;
   displayNameOverrides: {
     city: boolean;
     country: boolean;
@@ -107,6 +120,11 @@ export type PosterAction =
   | { type: "REMOVE_SAVED_THEME"; themeId: string }
   | { type: "SELECT_LOCATION"; location: SearchResult }
   | { type: "SET_USER_LOCATION"; location: SearchResult | null }
+  | {
+      type: "SET_LOCATION_BOUNDARY";
+      boundary: LocationBoundary | null;
+      status: LocationBoundaryStatus;
+    }
   | { type: "CLEAR_LOCATION" }
   | { type: "SET_LOCATION_FOCUSED"; focused: boolean }
   | { type: "SET_ERROR"; error: string }
@@ -173,7 +191,11 @@ export function posterReducer(
         displayNameOverrides: nextDisplayNameOverrides,
         // Clear selected location when location/lat/lon field changes
         ...(["location", "latitude", "longitude"].includes(action.name)
-          ? { selectedLocation: null }
+          ? {
+              selectedLocation: null,
+              locationBoundary: null,
+              locationBoundaryStatus: "idle" as const,
+            }
           : {}),
       };
     }
@@ -253,6 +275,9 @@ export function posterReducer(
         ...state,
         selectedLocation: action.location,
         isLocationFocused: false,
+        // The previous outline belongs to a different place.
+        locationBoundary: null,
+        locationBoundaryStatus: "idle",
         displayNameOverrides: { city: false, country: false },
         form: {
           ...state.form,
@@ -271,10 +296,25 @@ export function posterReducer(
         userLocation: action.location,
       };
 
+    case "SET_LOCATION_BOUNDARY":
+      if (
+        state.locationBoundary === action.boundary &&
+        state.locationBoundaryStatus === action.status
+      ) {
+        return state;
+      }
+      return {
+        ...state,
+        locationBoundary: action.boundary,
+        locationBoundaryStatus: action.status,
+      };
+
     case "CLEAR_LOCATION":
       return {
         ...state,
         selectedLocation: null,
+        locationBoundary: null,
+        locationBoundaryStatus: "idle",
         displayNameOverrides: { city: false, country: false },
         form: {
           ...state.form,

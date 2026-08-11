@@ -1,3 +1,4 @@
+import type { LocationBoundaryStatus } from "@/features/poster/application/posterReducer";
 import MapDimensionFields from "./MapDimensionFields";
 
 interface LayerForm {
@@ -17,6 +18,7 @@ interface LayerForm {
   includeCycleways: boolean;
   includeCountryBorders: boolean;
   includeFinegrainedBorders: boolean;
+  clipToBoundary: boolean;
 }
 
 interface LayersSectionProps {
@@ -25,6 +27,28 @@ interface LayersSectionProps {
   minPosterCm: number;
   maxPosterCm: number;
   onNumericFieldBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
+  hasSelectedLocation: boolean;
+  boundaryStatus: LocationBoundaryStatus;
+}
+
+function resolveBoundaryHint(
+  hasSelectedLocation: boolean,
+  status: LocationBoundaryStatus,
+  isEnabled: boolean,
+): string {
+  if (!hasSelectedLocation) {
+    return "Pick a place from the location search to use its boundary.";
+  }
+  if (!isEnabled) {
+    return "";
+  }
+  if (status === "loading") {
+    return "Loading boundary…";
+  }
+  if (status === "unavailable") {
+    return "No boundary outline is available for this place.";
+  }
+  return "";
 }
 
 export default function LayersSection({
@@ -33,7 +57,15 @@ export default function LayersSection({
   minPosterCm,
   maxPosterCm,
   onNumericFieldBlur,
+  hasSelectedLocation,
+  boundaryStatus,
 }: LayersSectionProps) {
+  const boundaryHint = resolveBoundaryHint(
+    hasSelectedLocation,
+    boundaryStatus,
+    Boolean(form.clipToBoundary),
+  );
+
   return (
     <section className="panel-block">
       <p className="section-summary-label">LAYERS</p>
@@ -159,6 +191,24 @@ export default function LayersSection({
           <span className="theme-switch-track" aria-hidden="true" />
         </span>
       </label>
+      <label
+        className={`toggle-field${hasSelectedLocation ? "" : " toggle-field--disabled"}`}
+      >
+        <span>Clip to location boundary</span>
+        <span className="theme-switch">
+          <input
+            type="checkbox"
+            name="clipToBoundary"
+            checked={Boolean(form.clipToBoundary)}
+            disabled={!hasSelectedLocation}
+            onChange={onChange}
+          />
+          <span className="theme-switch-track" aria-hidden="true" />
+        </span>
+      </label>
+      {boundaryHint ? (
+        <p className="layers-section__hint">{boundaryHint}</p>
+      ) : null}
 
       <div className="map-details-section">
         <h3 className="map-details-subtitle">Map Details</h3>
