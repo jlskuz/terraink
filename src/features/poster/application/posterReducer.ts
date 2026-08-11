@@ -53,6 +53,7 @@ export interface PosterForm {
   includeRoadPath: boolean;
   includeRoadMinorLow: boolean;
   includeRoadOutline: boolean;
+  includeCycleways: boolean;
   showMarkers: boolean;
   showRoutes: boolean;
 }
