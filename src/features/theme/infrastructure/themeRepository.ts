@@ -40,6 +40,10 @@ const fallbackTheme: ResolvedTheme = {
       path: "#D9A08A",
       outline: "#F5EDE4",
     },
+    boundary: {
+      country: "#8B4513",
+      state: "#8B4513"
+    }
   },
 };
 
@@ -84,6 +88,14 @@ const themeColorLookup: Record<ThemeColorKey, string[]> = {
     "road_residential",
   ],
   "map.roads.outline": ["map.roads.outline", "road_outline", "bg"],
+  "map.boundary.country": [
+    "map.boundary.country",
+    "boundary_default",
+  ],
+  "map.boundary.state": [
+    "map.boundary.state",
+    "boundary_default",
+  ],
 };
 
 const referenceAliases: Record<string, string> = {
@@ -246,6 +258,14 @@ function normalizeTheme(themeInput: unknown): ResolvedTheme {
     return normalizedTextHex;
   })();
 
+  const boundaryCountry =
+  resolveByCandidates(theme, themeColorLookup["map.boundary.country"]) ||
+  blendHex(land, uiText, 0.62);
+
+  const boundaryState =
+  resolveByCandidates(theme, themeColorLookup["map.boundary.state"]) ||
+  blendHex(land, uiText, 0.62);
+
   return {
     name,
     description,
@@ -270,6 +290,10 @@ function normalizeTheme(themeInput: unknown): ResolvedTheme {
         path: roadPath,
         outline: roadOutline,
       },
+      boundary: {
+        country: boundaryCountry,
+        state: boundaryState,
+      }
     },
   };
 }

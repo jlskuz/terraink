@@ -303,12 +303,6 @@ export function generateMapStyle(
   const includeFinegrainedBorders = options?.includeFinegrainedBorders ?? false;
   const buildingMinZoom = resolveBuildingMinZoom(options?.distanceMeters);
 
-  const boundaryColor = blendHex(
-    theme.map.land || "#ffffff",
-    theme.ui.text || "#111111",
-    BOUNDARY_BLEND_FACTOR,
-  );
-
   const minorHighCasingStops = scaledStops(
     MAP_ROAD_MINOR_HIGH_DETAIL_WIDTH_STOPS,
     1.45,
@@ -360,6 +354,10 @@ export function generateMapStyle(
   const roadMinorLowColor = theme.map.roads.minor_low;
   const roadPathColor = theme.map.roads.path;
   const roadOutlineColor = theme.map.roads.outline;
+
+  const boundaryCountry = theme.map.boundary.country;
+  const boundaryState = theme.map.boundary.state;
+
 
   return {
     version: 8,
@@ -809,7 +807,7 @@ export function generateMapStyle(
         type: "line" as const,
         filter: finegrainedBoundaryFilter(),
         paint: {
-          "line-color": boundaryColor,
+          "line-color": boundaryState,
           "line-width": widthExpr(boundaryWidthStops),
           "line-opacity": opacityExpr([
             [0, 0.7],
@@ -835,7 +833,7 @@ export function generateMapStyle(
         type: "line" as const,
         filter: countryBoundaryFilter(),
         paint: {
-          "line-color": boundaryColor,
+          "line-color": boundaryCountry,
           "line-width": widthExpr(boundaryWidthStops),
           "line-opacity": opacityExpr([
             [0, 0.7],

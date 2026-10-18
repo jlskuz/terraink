@@ -3,6 +3,11 @@ export interface ThemeUiColors {
   text: string;
 }
 
+export interface ThemeBoundaryColors {
+  country: string;
+  state: string;
+}
+
 export interface ThemeRoadColors {
   major: string;
   minor_high: string;
@@ -22,6 +27,7 @@ export interface ThemeMapColors {
   aeroway: string;
   rail: string;
   roads: ThemeRoadColors;
+  boundary: ThemeBoundaryColors;
 }
 
 export interface ThemeColors {
@@ -50,7 +56,9 @@ export type ThemeColorKey =
   | "map.roads.minor_mid"
   | "map.roads.minor_low"
   | "map.roads.path"
-  | "map.roads.outline";
+  | "map.roads.outline"
+  | "map.boundary.country"
+  | "map.boundary.state";
 
 export interface ThemeOption {
   id: string;
@@ -84,6 +92,8 @@ export const DISPLAY_PALETTE_KEYS: ThemeColorKey[] = [
   "map.roads.minor_low",
   "map.roads.path",
   "map.roads.outline",
+  "map.boundary.country",
+  "map.boundary.state",
 ];
 
 export const PALETTE_COLOR_LABELS: Record<ThemeColorKey, string> = {
@@ -103,4 +113,6 @@ export const PALETTE_COLOR_LABELS: Record<ThemeColorKey, string> = {
   "map.roads.minor_low": "Roads Minor Low",
   "map.roads.path": "Roads Path",
   "map.roads.outline": "Road Outline",
+  "map.boundary.country": "Country Boundary",
+  "map.boundary.state": "State and City Boundary",
 };
