@@ -62,7 +62,16 @@ export default defineConfig({
   define: {
     "import.meta.env.VITE_APP_VERSION": JSON.stringify(appVersion),
   },
+  optimizeDeps: {
+    // Preserve any existing optimizeDeps settings.
+    esbuildOptions: {
+      target: "es2022",
+    },
+  },
   build: {
+    // Preserve your existing build settings.
+    target: "es2022",
+
     // maplibre-gl is distributed as a large prebundled module and remains a
     // single chunk even with manual chunking.
     chunkSizeWarningLimit: 1100,
