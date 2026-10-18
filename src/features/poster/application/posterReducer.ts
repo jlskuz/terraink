@@ -55,6 +55,7 @@ export interface PosterForm {
   includeRoadOutline: boolean;
   includeCycleways: boolean;
   includeCountryBorders: boolean;
+  includeFinegrainedBorders: boolean;
   showMarkers: boolean;
   showRoutes: boolean;
 }

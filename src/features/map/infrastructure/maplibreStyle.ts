@@ -242,6 +242,25 @@ function countryBoundaryFilter(): any {
   ];
 }
 
+function finegrainedBoundaryFilter(): any {
+  return [
+    "all",
+    LINE_GEOMETRY_FILTER,
+    ["has", "admin_level"],
+    [
+      ">",
+      ["to-number", ["get", "admin_level"]],
+      MAP_BOUNDARY_COUNTRY_MAX_ADMIN_LEVEL,
+    ],
+    [
+      "<=",
+      ["to-number", ["get", "admin_level"]],
+      7,
+    ],
+    ["!=", ["to-number", ["get", "maritime"]], 1],
+  ];
+}
+
 export function generateMapStyle(
   theme: ResolvedTheme,
   options?: {
@@ -257,6 +276,7 @@ export function generateMapStyle(
     includeRoadOutline?: boolean;
     includeCycleways?: boolean;
     includeCountryBorders?: boolean;
+    includeFinegrainedBorders?: boolean;
     distanceMeters?: number;
   },
 ): StyleSpecification {
@@ -280,6 +300,7 @@ export function generateMapStyle(
   const includeRoadOutline = options?.includeRoadOutline ?? true;
   const includeCycleways = options?.includeCycleways ?? false;
   const includeCountryBorders = options?.includeCountryBorders ?? false;
+  const includeFinegrainedBorders = options?.includeFinegrainedBorders ?? false;
   const buildingMinZoom = resolveBuildingMinZoom(options?.distanceMeters);
 
   const boundaryColor = blendHex(
@@ -778,6 +799,30 @@ export function generateMapStyle(
         layout: {
           visibility: includeCycleways ? ("visible" as const) : ("none" as const),
           "line-cap": "round" as const,
+          "line-join": "round" as const,
+        },
+      },
+      {
+        id: "boundary-finegrained",
+        source: SOURCE_ID,
+        "source-layer": "boundary",
+        type: "line" as const,
+        filter: finegrainedBoundaryFilter(),
+        paint: {
+          "line-color": boundaryColor,
+          "line-width": widthExpr(boundaryWidthStops),
+          "line-opacity": opacityExpr([
+            [0, 0.7],
+            [8, 0.82],
+            [14, 0.9],
+          ]),
+          "line-dasharray": [4, 2],
+        },
+        layout: {
+          visibility: includeFinegrainedBorders
+          ? ("visible" as const)
+          : ("none" as const),
+          "line-cap": "butt" as const,
           "line-join": "round" as const,
         },
       },

@@ -16,6 +16,7 @@ interface LayerForm {
   includeRoadOutline: boolean;
   includeCycleways: boolean;
   includeCountryBorders: boolean;
+  includeFinegrainedBorders: boolean;
 }
 
 interface LayersSectionProps {
@@ -140,6 +141,19 @@ export default function LayersSection({
             type="checkbox"
             name="includeCountryBorders"
             checked={Boolean(form.includeCountryBorders)}
+            onChange={onChange}
+          />
+          <span className="theme-switch-track" aria-hidden="true" />
+        </span>
+      </label>
+
+      <label className="toggle-field">
+        <span>Show state and city borders</span>
+        <span className="theme-switch">
+          <input
+            type="checkbox"
+            name="includeFinegrainedBorders"
+            checked={Boolean(form.includeFinegrainedBorders)}
             onChange={onChange}
           />
           <span className="theme-switch-track" aria-hidden="true" />
